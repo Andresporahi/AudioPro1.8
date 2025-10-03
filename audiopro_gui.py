@@ -410,7 +410,9 @@ class AudioProGUI:
 
     def prepare_local_file(self, file_path):
         """Prepara un archivo local para procesamiento por lotes."""
-        from audio_utils_cli import extract_audio_wav16_mono, process_audio_with_elevenlabs
+        from audio_utils_cli import (extract_audio_wav16_mono, 
+                                     process_audio_with_elevenlabs,
+                                     is_audio_only_file)
 
         self.message_queue.put(('log', f"📁 Archivo: {os.path.basename(file_path)}", None))
 
@@ -418,10 +420,18 @@ class AudioProGUI:
         file_name = os.path.basename(file_path)
         original_name = os.path.splitext(file_name)[0]
         source_dir = os.path.dirname(file_path)
+        
+        # Detectar si es video o audio puro
+        is_audio = is_audio_only_file(file_path)
+        
+        if is_audio:
+            self.message_queue.put(('log', "🎵 Archivo de audio detectado", None))
+        else:
+            self.message_queue.put(('log', "🎬 Video detectado - extrayendo audio en calidad 48kHz 24-bit", None))
 
-        # Extraer audio si es necesario (devuelve ruta del WAV extraído)
+        # Extraer audio (48kHz 24-bit para mantener calidad)
         self.message_queue.put(('log', "🎵 Extrayendo audio...", None))
-        extracted_wav_path = extract_audio_wav16_mono(file_path)
+        extracted_wav_path = extract_audio_wav16_mono(file_path, bit_depth=24)
 
         # ElevenLabs si está habilitado
         if self.use_elevenlabs.get() and ELEVENLABS_API_KEY:
@@ -439,12 +449,16 @@ class AudioProGUI:
             'temp_path': extracted_wav_path,
             'original_name': original_name,
             'source_dir': source_dir or REAPER_SESSIONS_DIR,
-            'display_name': file_name
+            'display_name': file_name,
+            'is_video': not is_audio,
+            'original_file': file_path  # Guardar ruta original para videos
         }
 
     def prepare_drive_file(self, drive_url):
         """Prepara un archivo de Google Drive para procesamiento por lotes."""
-        from audio_utils_cli import extract_audio_wav16_mono, process_audio_with_elevenlabs
+        from audio_utils_cli import (extract_audio_wav16_mono, 
+                                     process_audio_with_elevenlabs,
+                                     is_audio_only_file)
         import tempfile
 
         self.message_queue.put(('log', "🔗 Descargando desde Google Drive...", None))
@@ -462,16 +476,18 @@ class AudioProGUI:
         temp_input = tempfile.NamedTemporaryFile(suffix=os.path.splitext(file_name)[1], delete=False)
         temp_input.write(file_bytes)
         temp_input.close()
+        
+        # Detectar si es video o audio puro
+        is_audio = is_audio_only_file(temp_input.name)
+        
+        if is_audio:
+            self.message_queue.put(('log', "🎵 Archivo de audio detectado", None))
+        else:
+            self.message_queue.put(('log', "🎬 Video detectado - extrayendo audio en calidad 48kHz 24-bit", None))
 
-        # Extraer audio (devuelve ruta del WAV extraído)
+        # Extraer audio (48kHz 24-bit para mantener calidad)
         self.message_queue.put(('log', "🎵 Extrayendo audio...", None))
-        extracted_wav_path = extract_audio_wav16_mono(temp_input.name)
-
-        # Eliminar archivo temporal de entrada
-        try:
-            os.unlink(temp_input.name)
-        except Exception:
-            pass
+        extracted_wav_path = extract_audio_wav16_mono(temp_input.name, bit_depth=24)
 
         # ElevenLabs si está habilitado
         if self.use_elevenlabs.get() and ELEVENLABS_API_KEY:
@@ -489,7 +505,9 @@ class AudioProGUI:
             'temp_path': extracted_wav_path,
             'original_name': original_name,
             'source_dir': REAPER_SESSIONS_DIR,
-            'display_name': file_name
+            'display_name': file_name,
+            'is_video': not is_audio,
+            'original_file': temp_input.name  # Guardar ruta temporal para videos
         }
 
     def process_batch_with_reaper(self, prepared_files):
@@ -543,9 +561,43 @@ class AudioProGUI:
 
         # Verificar archivos de salida
         procesados_dir = os.path.join(base_dir, "procesados")
+        
+        # Post-procesar: Re-embeber audio en videos
+        from audio_utils_cli import remux_video_with_audio
+        
+        for file_info in prepared_files:
+            if file_info.get('is_video', False):
+                self.message_queue.put(('log', f"\n🎬 Re-embebiendo audio en video: {file_info['display_name']}", "#00d4ff"))
+                
+                # Ruta del audio procesado por Reaper
+                processed_audio = os.path.join(procesados_dir, f"{file_info['original_name']}_procesado.wav")
+                
+                # Ruta del video original
+                original_video = file_info['original_file']
+                
+                # Determinar extensión del video original
+                original_ext = os.path.splitext(file_info['display_name'])[1]
+                
+                # Ruta del video final con audio embebido
+                final_video = os.path.join(procesados_dir, f"{file_info['original_name']}_procesado{original_ext}")
+                
+                try:
+                    if os.path.exists(processed_audio):
+                        remux_video_with_audio(original_video, processed_audio, final_video)
+                        self.message_queue.put(('log', f"✅ Video con audio procesado: {os.path.basename(final_video)}", "#00ff00"))
+                        
+                        # Eliminar el WAV temporal (ya está embebido en el video)
+                        try:
+                            os.unlink(processed_audio)
+                        except Exception:
+                            pass
+                    else:
+                        self.message_queue.put(('log', f"⚠️ No se encontró audio procesado para: {file_info['display_name']}", "#ffff00"))
+                except Exception as e:
+                    self.message_queue.put(('log', f"❌ Error re-embebiendo video: {str(e)}", "#ff0000"))
 
-        self.message_queue.put(('log', "\n✅ Archivos procesados guardados en:", "#00ff00"))
-        self.message_queue.put(('log', f"📂 {procesados_dir}", "#00ff00"))
+        self.message_queue.put(('log', "\n✅ Procesamiento completado", "#00ff00"))
+        self.message_queue.put(('log', f"📂 Archivos guardados en: {procesados_dir}", "#00ff00"))
 
         # Limpiar archivos temporales
         for f in prepared_files:
@@ -553,6 +605,13 @@ class AudioProGUI:
                 os.unlink(f['temp_path'])
             except Exception:
                 pass
+            
+            # Limpiar archivo temporal de Drive
+            if f.get('is_video') and 'drive' in f.get('original_file', '').lower():
+                try:
+                    os.unlink(f['original_file'])
+                except Exception:
+                    pass
 
         return {'output_dir': procesados_dir}
 

@@ -109,11 +109,12 @@ def get_bytes_from_drive(drive_url: str) -> Optional[Tuple[bytes, str]]:
         return None
 
 
-def extract_audio_wav16_mono(input_file: str) -> str:
+def extract_audio_wav16_mono(input_file: str, bit_depth: int = 24) -> str:
     """Extrae audio de un archivo y lo convierte a WAV mono 48kHz.
 
     Args:
         input_file: Ruta al archivo de entrada
+        bit_depth: Profundidad de bits (16 o 24, por defecto 24)
 
     Returns:
         Ruta al archivo WAV generado
@@ -126,18 +127,53 @@ def extract_audio_wav16_mono(input_file: str) -> str:
 
     output_file = os.path.join(eleven_dir, f"extracted_{timestamp}.wav")
 
+    # Configurar codec según profundidad de bits
+    if bit_depth == 24:
+        codec = 'pcm_s24le'
+        sample_fmt = 's32'  # FFmpeg usa s32 internamente para 24-bit
+    else:
+        codec = 'pcm_s16le'
+        sample_fmt = 's16'
+
     cmd = [
         'ffmpeg', '-y', '-i', input_file,
         '-ac', '1',  # mono
         '-ar', '48000',  # 48kHz (estándar profesional)
-        '-acodec', 'pcm_s16le',  # 16-bit PCM
-        '-sample_fmt', 's16',  # Asegurar formato 16-bit
+        '-acodec', codec,
+        '-sample_fmt', sample_fmt,
         output_file
     ]
 
     run_ffmpeg(cmd)
-    print_info(f"Audio extraído guardado en: {output_file}")
+    print_info(f"Audio extraído guardado en: {output_file} ({bit_depth}-bit)")
     return output_file
+
+
+def remux_video_with_audio(video_file: str, audio_file: str, output_file: str) -> None:
+    """Re-embebe audio procesado en video sin recodificar (sin pérdida).
+
+    Args:
+        video_file: Ruta al archivo de video original
+        audio_file: Ruta al audio procesado (WAV)
+        output_file: Ruta al archivo de salida
+    """
+    print_info("Re-embebiendo audio procesado en video sin pérdida...")
+    
+    cmd = [
+        'ffmpeg', '-y',
+        '-i', video_file,  # Video original
+        '-i', audio_file,  # Audio procesado
+        '-map', '0:v',  # Copiar stream de video del primer input
+        '-map', '1:a',  # Copiar stream de audio del segundo input
+        '-c:v', 'copy',  # NO recodificar video (sin pérdida)
+        '-c:a', 'aac',  # Codificar audio a AAC (compatible)
+        '-b:a', '320k',  # Bitrate alto para mantener calidad
+        '-movflags', '+faststart',  # Optimización para streaming
+        output_file
+    ]
+    
+    run_ffmpeg(cmd)
+    print_success(f"Video con audio procesado: {output_file}")
 
 
 def run_ffmpeg(cmd: list) -> None:
