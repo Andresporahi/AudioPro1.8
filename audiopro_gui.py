@@ -11,10 +11,7 @@ from datetime import datetime
 import queue
 
 # Importar funciones del CLI
-from audio_utils_cli import (
-    get_bytes_from_local_path,
-    get_bytes_from_drive
-)
+from audio_utils_cli import get_bytes_from_drive
 
 # Configuración
 REAPER_EXE = r"C:\Program Files\REAPER (x64)\reaper.exe"
@@ -414,35 +411,32 @@ class AudioProGUI:
     def prepare_local_file(self, file_path):
         """Prepara un archivo local para procesamiento por lotes."""
         from audio_utils_cli import extract_audio_wav16_mono, process_audio_with_elevenlabs
-        import tempfile
 
         self.message_queue.put(('log', f"📁 Archivo: {os.path.basename(file_path)}", None))
 
-        result = get_bytes_from_local_path(file_path)
-        if not result:
-            raise Exception("No se pudo leer el archivo")
-
-        file_bytes, file_name, source_dir = result
-
         # Determinar nombre base sin extensión
+        file_name = os.path.basename(file_path)
         original_name = os.path.splitext(file_name)[0]
+        source_dir = os.path.dirname(file_path)
 
-        # Extraer audio si es necesario
+        # Extraer audio si es necesario (devuelve ruta del WAV extraído)
         self.message_queue.put(('log', "🎵 Extrayendo audio...", None))
-        audio_bytes = extract_audio_wav16_mono(file_bytes, file_name)
+        extracted_wav_path = extract_audio_wav16_mono(file_path)
 
         # ElevenLabs si está habilitado
         if self.use_elevenlabs.get() and ELEVENLABS_API_KEY:
             self.message_queue.put(('log', "✨ Procesando con ElevenLabs...", None))
-            audio_bytes = process_audio_with_elevenlabs(audio_bytes, ELEVENLABS_API_KEY, ELEVENLABS_BASE_URL)
-
-        # Guardar audio temporal
-        temp_wav = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
-        temp_wav.write(audio_bytes)
-        temp_wav.close()
+            # Leer el WAV extraído
+            with open(extracted_wav_path, 'rb') as f:
+                audio_bytes = f.read()
+            # Procesar con ElevenLabs
+            processed_bytes = process_audio_with_elevenlabs(audio_bytes, ELEVENLABS_API_KEY, ELEVENLABS_BASE_URL)
+            # Sobrescribir el archivo con el procesado
+            with open(extracted_wav_path, 'wb') as f:
+                f.write(processed_bytes)
 
         return {
-            'temp_path': temp_wav.name,
+            'temp_path': extracted_wav_path,
             'original_name': original_name,
             'source_dir': source_dir or REAPER_SESSIONS_DIR,
             'display_name': file_name
@@ -464,22 +458,35 @@ class AudioProGUI:
         # Determinar nombre base
         original_name = os.path.splitext(file_name)[0]
 
-        # Extraer audio
+        # Guardar el archivo descargado temporalmente
+        temp_input = tempfile.NamedTemporaryFile(suffix=os.path.splitext(file_name)[1], delete=False)
+        temp_input.write(file_bytes)
+        temp_input.close()
+
+        # Extraer audio (devuelve ruta del WAV extraído)
         self.message_queue.put(('log', "🎵 Extrayendo audio...", None))
-        audio_bytes = extract_audio_wav16_mono(file_bytes, file_name)
+        extracted_wav_path = extract_audio_wav16_mono(temp_input.name)
+
+        # Eliminar archivo temporal de entrada
+        try:
+            os.unlink(temp_input.name)
+        except Exception:
+            pass
 
         # ElevenLabs si está habilitado
         if self.use_elevenlabs.get() and ELEVENLABS_API_KEY:
             self.message_queue.put(('log', "✨ Procesando con ElevenLabs...", None))
-            audio_bytes = process_audio_with_elevenlabs(audio_bytes, ELEVENLABS_API_KEY, ELEVENLABS_BASE_URL)
-
-        # Guardar audio temporal
-        temp_wav = tempfile.NamedTemporaryFile(suffix='.wav', delete=False)
-        temp_wav.write(audio_bytes)
-        temp_wav.close()
+            # Leer el WAV extraído
+            with open(extracted_wav_path, 'rb') as f:
+                audio_bytes = f.read()
+            # Procesar con ElevenLabs
+            processed_bytes = process_audio_with_elevenlabs(audio_bytes, ELEVENLABS_API_KEY, ELEVENLABS_BASE_URL)
+            # Sobrescribir el archivo con el procesado
+            with open(extracted_wav_path, 'wb') as f:
+                f.write(processed_bytes)
 
         return {
-            'temp_path': temp_wav.name,
+            'temp_path': extracted_wav_path,
             'original_name': original_name,
             'source_dir': REAPER_SESSIONS_DIR,
             'display_name': file_name
