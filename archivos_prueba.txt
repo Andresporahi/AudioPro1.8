@@ -1,0 +1,21 @@
+# AudioPro CLI - Archivo de ejemplo para procesamiento por lotes
+# 
+# INSTRUCCIONES:
+# 1. Reemplaza estas rutas con las rutas reales de tus archivos
+# 2. Puedes mezclar rutas locales y URLs de Google Drive
+# 3. Las líneas que comienzan con # son comentarios (se ignoran)
+# 4. Guarda el archivo y ejecuta: python audiopro_cli.py -b archivos_prueba.txt
+#
+# EJEMPLOS DE RUTAS LOCALES:
+# C:\Videos\video1.mp4
+# C:\Audio\podcast.mp3
+# D:\Grabaciones\entrevista.wav
+# F:\Proyectos\conferencia.mp4
+#
+# EJEMPLOS DE URLS DE GOOGLE DRIVE:
+# https://drive.google.com/file/d/1ABC123XYZ/view
+# https://drive.google.com/file/d/1DEF456UVW/view
+#
+# NOTA: Elimina el símbolo # al inicio de cada línea para activar el procesamiento
+
+

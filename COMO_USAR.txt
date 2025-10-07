@@ -1,0 +1,152 @@
+================================================================================
+  AudioPro CLI v1.7 - GUÍA DE USO RÁPIDA
+================================================================================
+
+🎯 FORMAS DE USAR LA APLICACIÓN:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 MÉTODO 1: ACCESO DIRECTO (MÁS FÁCIL) ⭐
+
+   ✅ ¡YA ESTÁ CREADO EN TU ESCRITORIO!
+   
+   1. Ve a tu escritorio
+   2. Busca el icono "AudioPro CLI"
+   3. Haz doble clic
+   4. ¡La app se abre automáticamente!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 MÉTODO 2: ARCHIVOS .BAT DISPONIBLES
+
+   🔹 AudioPro_CLI.bat
+      → Inicia la app directamente (el mismo que el acceso directo)
+   
+   🔹 EJEMPLO_USO.bat
+      → Muestra ejemplos y luego inicia la app
+   
+   🔹 start_cli.bat
+      → Versión básica para iniciar la app
+   
+   🔹 Crear_Acceso_Directo.bat
+      → Re-crea el acceso directo si lo borras
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 MÉTODO 3: LÍNEA DE COMANDOS
+
+   Abre PowerShell o CMD en esta carpeta y ejecuta:
+
+   🔹 Modo Interactivo:
+      python audiopro_cli.py
+
+   🔹 Procesar un archivo:
+      python audiopro_cli.py -f "C:\ruta\a\tu\video.mp4"
+
+   🔹 Procesar desde Google Drive:
+      python audiopro_cli.py -d "https://drive.google.com/file/d/XXXXX"
+
+   🔹 Procesar varios archivos:
+      python audiopro_cli.py -b "archivos_prueba.txt"
+
+   🔹 Sin ElevenLabs:
+      python audiopro_cli.py -f "video.mp4" --no-elevenlabs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 ARCHIVOS DE AYUDA DISPONIBLES:
+
+   📄 GUIA_RAPIDA.md         → Guía completa paso a paso
+   📄 README_CLI.md          → Documentación técnica completa
+   📄 COMO_USAR.txt          → Este archivo
+   📄 archivos_prueba.txt    → Plantilla para procesamiento por lotes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎮 USO BÁSICO CON EL MENÚ INTERACTIVO:
+
+   Cuando abras la app verás este menú:
+
+   ┌────────────────────────────────────────┐
+   │  MENÚ PRINCIPAL                        │
+   │  1. Procesar archivo desde ruta local  │
+   │  2. Procesar desde Google Drive        │
+   │  3. Procesar lote desde archivo texto  │
+   │  4. Configuración                      │
+   │  5. Salir                              │
+   └────────────────────────────────────────┘
+
+   Solo escribe el número y presiona Enter
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 EJEMPLO PRÁCTICO:
+
+   1. Haz doble clic en "AudioPro CLI" del escritorio
+   2. Selecciona opción "1" (archivo local)
+   3. Pega la ruta: C:\Videos\mi_video.mp4
+   4. ¿Usar ElevenLabs? Escribe "s" o "n"
+   5. ¡La app procesa automáticamente!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 ¿DÓNDE SE GUARDAN LOS ARCHIVOS PROCESADOS?
+
+   🔹 Archivos locales:
+      [carpeta_original]\procesados\archivo_procesado.mp4
+
+   🔹 Archivos de Drive:
+      F:\00\00 Reaper\Procesados\[sesion]\archivo_procesado.mp4
+
+   🔹 Sesiones de Reaper:
+      F:\00\00 Reaper\Procesados\[sesion]\[sesion].rpp
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚙️ CONFIGURACIÓN DE ELEVENLABS (OPCIONAL):
+
+   Si tienes API key de ElevenLabs:
+
+   1. Abre AudioPro_CLI.bat con un editor de texto
+   2. Busca estas líneas:
+      REM set ELEVENLABS_API_KEY=tu_api_key_aqui
+   3. Elimina "REM " y pon tu API key
+   4. Guarda el archivo
+
+   O en cada uso, puedes decir "n" cuando pregunte si usar ElevenLabs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆘 SOLUCIÓN DE PROBLEMAS:
+
+   ❌ "Python no reconocido"
+      → Instala Python: https://www.python.org/downloads/
+
+   ❌ "FFmpeg no encontrado"
+      → Instala FFmpeg: https://ffmpeg.org/download.html
+
+   ❌ El acceso directo no funciona
+      → Ejecuta: Crear_Acceso_Directo.bat
+
+   ❌ Error al procesar
+      → Verifica que Reaper esté instalado correctamente
+      → Revisa que el template existe: F:\00\00 Reaper\00 Voces.rpp
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 ¡COMIENZA AHORA!
+
+   La forma MÁS FÁCIL:
+   
+   1. Ve a tu escritorio
+   2. Haz doble clic en "AudioPro CLI"
+   3. ¡Listo!
+
+================================================================================
+
+Para más información detallada, lee:
+- GUIA_RAPIDA.md (para empezar rápido)
+- README_CLI.md (documentación completa)
+
+AudioPro CLI v1.7 🎛️
+

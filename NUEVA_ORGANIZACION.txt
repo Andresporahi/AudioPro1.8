@@ -1,0 +1,233 @@
+================================================================================
+  ✅ NUEVA ORGANIZACIÓN DE ARCHIVOS
+  AudioPro v1.7.2 - Solo Versión Local
+================================================================================
+
+🎯 CAMBIO IMPLEMENTADO:
+───────────────────────────────────────────────────────────────────────────────
+
+  Los archivos procesados ahora se guardan automáticamente en una carpeta
+  "procesados" dentro del directorio donde está el archivo original.
+
+================================================================================
+
+📂 ESTRUCTURA DE CARPETAS:
+───────────────────────────────────────────────────────────────────────────────
+
+ANTES (❌):
+───────────
+
+  Si procesabas: C:\Videos\mi_video.mp4
+  
+  Los archivos quedaban en:
+  - F:\00\00 Reaper\Procesados\sesion_12345\
+    ├── mi_video_renderizado.wav (render de Reaper)
+    └── mi_video_procesado.mp4 (archivo final)
+  
+  ❌ Lejos del archivo original
+  ❌ Difícil de encontrar
+  ❌ Mezclado con otros archivos
+
+AHORA (✅):
+──────────
+
+  Si procesas: C:\Videos\mi_video.mp4
+  
+  Los archivos quedan en:
+  - C:\Videos\procesados\
+    ├── mi_video_procesado.mp4 (archivo final) ← PRINCIPAL
+    └── mi_video_render_reaper.wav (render WAV)
+  
+  ✅ En la misma ubicación que el original
+  ✅ Fácil de encontrar
+  ✅ Organizado en carpeta dedicada
+
+================================================================================
+
+🎬 EJEMPLOS PRÁCTICOS:
+───────────────────────────────────────────────────────────────────────────────
+
+EJEMPLO 1: Video Local
+───────────────────────
+
+  Archivo original:
+  📁 D:\Grabaciones\clase_1.mp4
+  
+  Después del procesamiento:
+  📁 D:\Grabaciones\procesados\
+    ├── clase_1_procesado.mp4          ← Video con audio mejorado
+    └── clase_1_render_reaper.wav      ← Audio procesado por Reaper
+
+EJEMPLO 2: Audio Local
+──────────────────────
+
+  Archivo original:
+  📁 C:\Podcasts\episodio_5.mp3
+  
+  Después del procesamiento:
+  📁 C:\Podcasts\procesados\
+    ├── episodio_5_procesado.mp3       ← Audio mejorado
+    └── episodio_5_render_reaper.wav   ← Render WAV de Reaper
+
+EJEMPLO 3: Archivo de Google Drive
+───────────────────────────────────
+
+  Archivo de Drive:
+  🔗 https://drive.google.com/file/d/ABC123/video.mp4
+  
+  Se guarda en:
+  📁 F:\00\00 Reaper\Procesados\sesion_ABC123\procesados\
+    ├── video_procesado.mp4
+    └── video_render_reaper.wav
+
+EJEMPLO 4: Múltiples archivos en la misma carpeta
+──────────────────────────────────────────────────
+
+  Archivos originales:
+  📁 F:\Proyectos\
+    ├── video_1.mp4
+    ├── video_2.mp4
+    └── video_3.mp4
+  
+  Después del procesamiento:
+  📁 F:\Proyectos\procesados\
+    ├── video_1_procesado.mp4
+    ├── video_1_render_reaper.wav
+    ├── video_2_procesado.mp4
+    ├── video_2_render_reaper.wav
+    ├── video_3_procesado.mp4
+    └── video_3_render_reaper.wav
+
+================================================================================
+
+📋 ARCHIVOS QUE SE GUARDAN:
+───────────────────────────────────────────────────────────────────────────────
+
+En la carpeta "procesados" encontrarás:
+
+1. 🎬 [nombre]_procesado.mp4 (o .mp3, .wav, etc.)
+   └─> Archivo FINAL con audio procesado por Reaper
+   └─> Este es el que debes usar/compartir
+
+2. 🎵 [nombre]_render_reaper.wav
+   └─> Render WAV puro de Reaper
+   └─> Útil para edición adicional
+   └─> Alta calidad 48kHz 16-bit mono
+
+================================================================================
+
+🔍 MENSAJES EN EL LOG:
+───────────────────────────────────────────────────────────────────────────────
+
+Durante el procesamiento verás:
+
+  📂 Carpeta de salida: C:\Videos\procesados
+  🎬 Combinando audio procesado con video...
+  ✅ Video final: C:\Videos\procesados\video_procesado.mp4
+  💾 Render de Reaper guardado: video_render_reaper.wav
+  ✅ Procesado completado: video_procesado.mp4
+
+================================================================================
+
+💡 VENTAJAS:
+───────────────────────────────────────────────────────────────────────────────
+
+✅ TODO EN UN LUGAR
+   - Archivo original y procesado en carpetas cercanas
+   - Fácil de comparar antes/después
+
+✅ ORGANIZACIÓN AUTOMÁTICA
+   - No necesitas buscar en carpetas de Reaper
+   - Todo se crea automáticamente
+
+✅ SIN CONFLICTOS
+   - Carpeta "procesados" separada del original
+   - No sobrescribe nada
+
+✅ MÚLTIPLES ARCHIVOS
+   - Puedes procesar varios archivos de la misma carpeta
+   - Todos quedan organizados en procesados/
+
+✅ BACKUP DEL RENDER
+   - Guardas tanto el archivo final como el WAV de Reaper
+   - Útil si necesitas re-procesar
+
+================================================================================
+
+🎯 FLUJO COMPLETO:
+───────────────────────────────────────────────────────────────────────────────
+
+  1. Seleccionas archivo: C:\Videos\clase.mp4
+     ↓
+  2. La app procesa con Reaper
+     ↓
+  3. Se crea automáticamente: C:\Videos\procesados\
+     ↓
+  4. Se guarda:
+     - clase_procesado.mp4 (video final)
+     - clase_render_reaper.wav (render de Reaper)
+     ↓
+  5. ✅ Listo para usar!
+
+================================================================================
+
+📁 ESTRUCTURA FINAL:
+───────────────────────────────────────────────────────────────────────────────
+
+  C:\Videos\
+  ├── clase.mp4                    ← Original (sin tocar)
+  └── procesados\                  ← Carpeta nueva (auto-creada)
+      ├── clase_procesado.mp4     ← USAR ESTE
+      └── clase_render_reaper.wav
+
+================================================================================
+
+🚀 CÓMO USAR:
+───────────────────────────────────────────────────────────────────────────────
+
+INTERFAZ GRÁFICA (GUI):
+──────────────────────
+
+  1. Abre "AudioPro GUI" desde el escritorio
+  2. Agrega tu archivo
+  3. Click en "🎛️ PROCESAR CON REAPER"
+  4. Busca en la carpeta "procesados" 
+  5. ¡Usa el archivo _procesado!
+
+LÍNEA DE COMANDOS (CLI):
+────────────────────────
+
+  python audiopro_cli.py -f "C:\Videos\clase.mp4"
+  
+  Resultado automático en:
+  C:\Videos\procesados\clase_procesado.mp4
+
+================================================================================
+
+💾 ARCHIVOS ACTUALIZADOS:
+───────────────────────────────────────────────────────────────────────────────
+
+  ✅ audiopro_cli.py    - Versión CLI
+  ✅ audiopro_gui.py    - Versión GUI (usa audiopro_cli.py)
+  
+  ❌ app.py - NO SE USA (Streamlit - descontinuado)
+
+================================================================================
+
+🎉 RESUMEN:
+───────────────────────────────────────────────────────────────────────────────
+
+  ✅ Carpeta "procesados" se crea automáticamente
+  ✅ En la misma ubicación que el archivo original
+  ✅ Contiene archivo final + render WAV
+  ✅ Fácil de encontrar y usar
+  ✅ Organización profesional
+
+  Versión: AudioPro v1.7.2
+  Fecha: 2025-10-03
+  
+  Solo versiones locales: CLI y GUI
+  Streamlit descontinuado
+
+================================================================================
+
