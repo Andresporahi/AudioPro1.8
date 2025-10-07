@@ -14,13 +14,17 @@ import queue
 from audio_utils_cli import get_bytes_from_drive
 
 # Configuración
-REAPER_EXE = r"C:\Program Files\REAPER (x64)\reaper.exe"
-REAPER_TEMPLATE = r"F:\00\00 Reaper\00 Voces.rpp"
-REAPER_SESSIONS_DIR = r"F:\00\00 Reaper\Procesados"
+from config_manager import get_config
+
+# Cargar configuración
+config = get_config()
+REAPER_EXE = config.get_reaper_exe()
+REAPER_TEMPLATE = config.get_reaper_template()
+REAPER_SESSIONS_DIR = config.get_reaper_sessions_dir()
 
 # ElevenLabs
-ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-ELEVENLABS_BASE_URL = os.getenv("ELEVENLABS_BASE_URL", "https://api.elevenlabs.io")
+ELEVENLABS_API_KEY = config.get_elevenlabs_api_key()
+ELEVENLABS_BASE_URL = config.get_elevenlabs_base_url()
 
 
 class AudioProGUI:
@@ -432,7 +436,7 @@ class AudioProGUI:
         if not is_audio:
             import datetime
             timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            eleven_dir = r"F:\00\00 Reaper\Eleven"
+            eleven_dir = config.get_reaper_eleven_dir()
             os.makedirs(eleven_dir, exist_ok=True)
             
             # Copiar video a ubicación accesible por Reaper
